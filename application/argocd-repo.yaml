@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/vermell/gitops
+    targetRevision: HEAD
+    path: foo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: foo
