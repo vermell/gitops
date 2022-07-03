@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: foo-app
+  namespace: foo
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: foo
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: foo
+    repoURL: https://github.com/vermell/gitops
+    targetRevision: HEAD
