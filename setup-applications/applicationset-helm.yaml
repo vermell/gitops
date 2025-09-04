@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: appset-helm
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: https://github.com/vermell/gitops.git
+      revision: HEAD
+      files:
+      - path: deployment/*/applications/*/envs/development/config.yaml
+
+  template:
+    metadata:
+      name: '{{index .path.segments 3}}'
+    spec:
+      # The project the application belongs to.
+      project: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+
+      # Source of the application manifests
+
+      sources:
+        - repoURL: '{{.environment.repoUrl}}'
+          path: '{{.environment.path}}'
+          targetRevision: '{{.environment.targetRevision}}'
+          helm:
+            valueFiles:
+              - '$values/{{index .path.segments 1}}/applications/{{index .path.segments 3}}/envs/development/values.yaml'
+        - repoURL: https://github.com/vermell/gitops.git
+          targetRevision: HEAD
+          ref: values
+
+      # Destination cluster and namespace to deploy the application
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: {{index .path.segments 1}}

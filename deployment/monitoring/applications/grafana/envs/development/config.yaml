@@ -1,0 +1,4 @@
+environment:
+  repoUrl: https://github.com/bitnami/charts
+  targetRevision: "elasticsearcha/22.1.6"
+  path: "bitnami/elasticsearchaie"
